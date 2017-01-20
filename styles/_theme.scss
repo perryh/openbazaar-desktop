@@ -208,6 +208,8 @@ input[type=range][class~="clrS"] {
   }
 }
 
+// End - select2
+
 .clrBrBk {
   background-color: $border;
 }
@@ -281,6 +283,55 @@ input[type=range][class~="clrS"] {
     border-color: $border3;
   }
 }
+// End Select2
+
+// Selectize
+.selectize-control {
+  &.clrP {
+    .selectize-input {
+      background-color: $primary;
+
+      .item {
+        background-color: $primary;
+      }      
+    }
+
+    .selectize-dropdown-content {
+      & > .option {
+        &.active {
+          background-color: $secondary;
+        }
+
+        .highlight {
+          color: $emphasis1;
+        }
+      }
+    }
+  }
+
+  &.clrS {
+    .selectize-input {
+      background-color: $secondary;
+
+      .item {
+        background-color: $secondary;
+      }
+    }    
+  }
+
+  .selectize-dropdown-content {
+    & > .option {
+      &.active {
+        background-color: $primary;
+      }
+
+      .highlight {
+        color: $emphasis2;
+      }
+    }
+  }    
+}
+// End - Selectize
 
 .toolTip {
   &:before {

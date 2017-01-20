@@ -1,5 +1,8 @@
 .selectize-control {
   .selectize-input {
+    box-shadow: none;
+    border-radius: $corner;
+
     &:not(.has-items) {
       input {
         // placeholder is being cut-off
@@ -7,4 +10,25 @@
       }
     }
   }
+
+  // Some of these styles probably also have to be worked
+  // in to non .multi selects.
+  &.multi {
+    .selectize-input {
+      & > .item {
+        box-shadow: none;
+        text-shadow: none;
+        border-radius: $corner;
+        background-image: none;
+      }
+    }
+  }
+
+  .selectize-dropdown-content {
+    & > .option {
+      .highlight {
+        background-color: transparent;
+      }
+    }
+  }  
 }

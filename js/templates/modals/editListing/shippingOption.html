@@ -10,7 +10,7 @@
         <hr class="clrBr rowMd" />
         <label for="<%= `shipDestinationsSelect_${ob.cid}` %>" class="required"><%= ob.polyT('editListing.shippingOptions.shippingDestinations') %></label>
         <% if (ob.errors['regions']) print(ob.formErrorTmpl({ errors: ob.errors['regions'] })) %>
-        <select id="<%= `shipDestinationsSelect_${ob.cid}` %>" multiple name="regions" class="clrBr clrP clrSh2 select2Tags" placeholder="<%= ob.polyT('editListing.shippingOptions.regionsPlaceholder') %>"></select>
+        <select id="<%= `shipDestinationsSelect_${ob.cid}` %>" multiple name="regions" class="clrBr clrP clrSh2" placeholder="<%= ob.polyT('editListing.shippingOptions.regionsPlaceholder') %>"></select>
       </div>
     </div>
     <div class="flexRow gutterH">
