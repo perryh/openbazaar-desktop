@@ -1,0 +1,10 @@
+.selectize-control {
+  .selectize-input {
+    &:not(.has-items) {
+      input {
+        // placeholder is being cut-off
+        width: 100% !important;
+      }
+    }
+  }
+}

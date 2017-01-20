@@ -74,6 +74,7 @@
     "node-polyglot": "^2.0.0",
     "open": "0.0.5",
     "select2": "^4.0.3",
+    "selectize": "^0.12.4",
     "sortablejs": "^1.5.0-rc1",
     "trumbowyg": "^2.4.2",
     "underscore": "^1.8.3",

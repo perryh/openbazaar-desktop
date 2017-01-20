@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import 'selectize';
 import loadTemplate from '../../../utils/loadTemplate';
 import { getTranslatedCountries, getCountryByDataName } from '../../../data/countries';
 import ServiceMd from '../../../models/listing/Service';
@@ -23,7 +24,7 @@ export default class extends BaseView {
 
     super(opts);
     this.options = opts;
-    this.select2CountryData = getTranslatedCountries(app.settings.get('language'))
+    this.selectCountryData = getTranslatedCountries(app.settings.get('language'))
       .map(countryObj => ({ id: countryObj.dataName, text: countryObj.name }));
     this.services = this.model.get('services');
     this.serviceViews = [];
@@ -177,23 +178,40 @@ export default class extends BaseView {
       this.$shipDestinationsPlaceholder = this.$(`#shipDestinationsPlaceholder_${this.model.cid}`);
       this.$servicesWrap = this.$('.js-servicesWrap');
 
-      this.$shipDestinationSelect.select2({
-        multiple: true,
-        // even though this is a tagging field, since we are limiting the possible selections
-        // to a list of countries, don't use tag: true, because then it will allows you to
-        // add tags not in the list
-        // tags: true,
-        dropdownParent: this.$(`#shipDestinationsDropdown_${this.model.cid}`),
-        data: this.select2CountryData,
-      }).on('change', () => {
-        this.$shipDestinationsPlaceholder[
-          this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
-        ]('emptyOfTags');
-      });
+      // this.$shipDestinationSelect.select2({
+      //   multiple: true,
+      //   // even though this is a tagging field, since we are limiting the possible selections
+      //   // to a list of countries, don't use tag: true, because then it will allows you to
+      //   // add tags not in the list
+      //   // tags: true,
+      //   dropdownParent: this.$(`#shipDestinationsDropdown_${this.model.cid}`),
+      //   data: this.select2CountryData,
+      // }).on('change', () => {
+      //   this.$shipDestinationsPlaceholder[
+      //     this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
+      //   ]('emptyOfTags');
+      // });
 
-      this.$shipDestinationsPlaceholder[
-        this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
-      ]('emptyOfTags');
+      // this.$shipDestinationsPlaceholder[
+      //   this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
+      // ]('emptyOfTags');
+
+      console.log('moo');
+      window.moo = this.$shipDestinationSelect;
+
+      this.$shipDestinationSelect.selectize({
+        delimiter: ',',
+        options: this.selectCountryData,
+        items: this.model.get('regions'),
+        valueField: 'id',
+        labelField: 'text',
+        searchField: 'text',
+        // render: {
+        //   item: item => `<div>${item.text}</div>`,
+        //   option: item => `<div>${item.text}</div>`,
+        // },
+        selectOnTab: true,
+      });
 
       this.serviceViews.forEach((serviceVw) => serviceVw.remove());
       this.serviceViews = [];
