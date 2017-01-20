@@ -91,3 +91,4 @@ const memoizedGetTranslatedRegions =
   _.memoize(getTranslatedRegions, (lang, sort) => `${lang}-${!!sort}`);
 
 export { memoizedGetTranslatedRegions as getTranslatedRegions };
+
