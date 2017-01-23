@@ -291,7 +291,7 @@ input[type=range][class~="clrS"] {
     .selectize-input {
       background-color: $primary;
 
-      .item {
+      .item, .item.active {
         background-color: $primary;
       }      
     }
@@ -313,7 +313,7 @@ input[type=range][class~="clrS"] {
     .selectize-input {
       background-color: $secondary;
 
-      .item {
+      .item, .item.active {
         background-color: $secondary;
       }
     }    
@@ -328,6 +328,15 @@ input[type=range][class~="clrS"] {
       .highlight {
         color: $emphasis2;
       }
+
+      &.region {
+        // target the first country (non region)
+        & + :not(.region) {
+          &:before {
+            border-top-color: $border;
+          }          
+        }
+      }      
     }
   }    
 }

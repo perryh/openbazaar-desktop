@@ -9,13 +9,21 @@
         width: 100% !important;
       }
     }
+
+    .tag {
+      &::before {
+        content: '#';
+        display: inline;
+      }
+    }
   }
 
   // Some of these styles probably also have to be worked
   // in to non .multi selects.
   &.multi {
     .selectize-input {
-      & > .item {
+      & > .item, & > .item.active {
+        cursor: default;
         box-shadow: none;
         text-shadow: none;
         border-radius: $corner;
@@ -28,6 +36,26 @@
     & > .option {
       .highlight {
         background-color: transparent;
+      }
+
+      &.region {
+        // target the first country (non region)
+        & + :not(.region) {
+          margin-top: 11px;
+          position: relative;
+          overflow: visible;
+
+          &:before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 8px;
+            right: 8px;
+            height: 1px;
+            border-top-width: 1px;
+            border-top-style: solid;
+          }          
+        }
       }
     }
   }  

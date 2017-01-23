@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import 'selectize';
 import loadTemplate from '../../../utils/loadTemplate';
+import regions, { getTranslatedRegions, getIndexedRegions } from '../../../data/regions';
 import { getTranslatedCountries, getCountryByDataName } from '../../../data/countries';
 import ServiceMd from '../../../models/listing/Service';
 import app from '../../../app';
@@ -24,8 +25,27 @@ export default class extends BaseView {
 
     super(opts);
     this.options = opts;
-    this.selectCountryData = getTranslatedCountries(app.settings.get('language'))
-      .map(countryObj => ({ id: countryObj.dataName, text: countryObj.name }));
+
+    // get regions
+    this.countryRegionData = getTranslatedRegions(app.settings.get('language'))
+      .map(regionObj => ({
+        id: regionObj.id,
+        text: regionObj.name,
+        // we want regions to appear at the top of the list
+        sortByText: `AAA_${regionObj.name}`,
+        isRegion: true,
+      }));
+
+    // now, we'll add in the countries
+    const countryData = getTranslatedCountries(app.settings.get('language'))
+      .map(countryObj => ({
+        id: countryObj.dataName,
+        text: countryObj.name,
+        sortByText: countryObj.name,
+        isRegion: false,
+      }));
+    this.countryRegionData = this.countryRegionData.concat(countryData);
+
     this.services = this.model.get('services');
     this.serviceViews = [];
 
@@ -48,6 +68,8 @@ export default class extends BaseView {
     const events = {
       'click .js-removeShippingOption': 'onClickRemoveShippingOption',
       'click .js-btnAddService': 'onClickAddService',
+      'click .js-moo': 'onClickMoo',
+      'click .js-clearShipDest': 'onClickClearShipDest',
     };
 
     events[`change #shipOptionType_${this.model.cid}`] = 'onChangeShippingType';
@@ -57,6 +79,35 @@ export default class extends BaseView {
 
   tagName() {
     return 'section';
+  }
+
+  onClickMoo() {
+    const selectize = this.$shipDestinationSelect[0]
+      .selectize;
+    const region = getIndexedRegions().ALL;
+
+    if (region) {
+      const selectValues = selectize.getValue();
+
+      // we won't add in the region element, instead
+      // the countries that comprise the region
+      // console.log(`the index of the region is ${selectValues.indexOf(value)}`);
+      // selectValues.splice(selectValues.indexOf(value), 1);
+
+      selectize.setValue(
+          selectValues.concat(region.countries),
+          true
+        );
+
+      // selectize.refreshOptions();
+      // selectize.refreshItems();
+    }
+  }
+
+  onClickClearShipDest() {
+    this.$shipDestinationSelect[0]
+      .selectize
+      .clear();
   }
 
   onClickRemoveShippingOption() {
@@ -149,6 +200,34 @@ export default class extends BaseView {
           !$(el).parents('.js-serviceSection').length)));
   }
 
+  containsRegion(region, list = this.$shipDestinationSelect[0].selectize.getValue()) {
+    const indexedRegion = getIndexedRegions()[region];
+
+    if (!indexedRegion) {
+      throw new Error('The provided region is not one of' +
+        ' available regions.');
+    }
+
+    return indexedRegion.countries
+      .every(elem => list.indexOf(elem) > -1);
+  }
+
+  get fullRegions() {
+    // Returns a list of any regions that are fully represented
+    // in the country dropdown (i.e. all the individual countries
+    // of the region are selected - the actual region selection may
+    // or may not be)
+    const selectedRegions = [];
+
+    regions.forEach(region => {
+      if (this.containsRegion(region.id)) {
+        selectedRegions.push(region.id);
+      }
+    });
+
+    return selectedRegions;
+  }
+
   render() {
     loadTemplate('modals/editListing/shippingOption.html', t => {
       this.$el.html(t({
@@ -178,39 +257,84 @@ export default class extends BaseView {
       this.$shipDestinationsPlaceholder = this.$(`#shipDestinationsPlaceholder_${this.model.cid}`);
       this.$servicesWrap = this.$('.js-servicesWrap');
 
-      // this.$shipDestinationSelect.select2({
-      //   multiple: true,
-      //   // even though this is a tagging field, since we are limiting the possible selections
-      //   // to a list of countries, don't use tag: true, because then it will allows you to
-      //   // add tags not in the list
-      //   // tags: true,
-      //   dropdownParent: this.$(`#shipDestinationsDropdown_${this.model.cid}`),
-      //   data: this.select2CountryData,
-      // }).on('change', () => {
-      //   this.$shipDestinationsPlaceholder[
-      //     this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
-      //   ]('emptyOfTags');
-      // });
-
-      // this.$shipDestinationsPlaceholder[
-      //   this.$shipDestinationSelect.val().length ? 'removeClass' : 'addClass'
-      // ]('emptyOfTags');
-
-      console.log('moo');
-      window.moo = this.$shipDestinationSelect;
-
       this.$shipDestinationSelect.selectize({
         delimiter: ',',
-        options: this.selectCountryData,
+        options: this.countryRegionData,
         items: this.model.get('regions'),
         valueField: 'id',
         labelField: 'text',
-        searchField: 'text',
-        // render: {
-        //   item: item => `<div>${item.text}</div>`,
-        //   option: item => `<div>${item.text}</div>`,
-        // },
+        // searchField: 'text',
+        // sortField: 'sortByText',
+        render: {
+          // item: item => `<div class="item">${item.text}</div>`,
+          // option: item => {
+          //   let text = item.text;
+
+          //   if (item.isRegion) {
+          //     if (this.containsRegion(item.id)) {
+          //       text = app.polyglot.t(`regions.clear_${item.id}`);
+          //     } else {
+          //       text = app.polyglot.t(`regions.${item.id}`);
+          //     }
+          //   }
+
+          //   return `<div class="option ${item.isRegion ? 'region' : ''}" >` +
+          //     `${text}</div>`;
+          // },
+          // option: item => {
+          //   return `<div class="option ${item.isRegion ? 'region' : ''}" >` +
+          //     `${item.text}</div>`;
+          //   },
+        },
         selectOnTab: true,
+        hideSelected: false,
+        // closeAfterSelect: true,
+        onItem34Add: (value) => {
+          if (this.addingCountryRegionItems) return;
+
+          console.log('moo');
+
+          // manage regions
+          const region = getIndexedRegions()[value];
+          const selectize = this.$shipDestinationSelect[0]
+            .selectize;
+
+          if (region) {
+            const selectValues = selectize.getValue();
+            this.addingCountryRegionItems = true;
+
+            // we won't add in the region element, instead
+            // the countries that comprise the region
+            console.log(`the index of the region is ${selectValues.indexOf(value)}`);
+            selectValues.splice(selectValues.indexOf(value), 1);
+
+            selectize.setValue(
+                selectValues.concat(region.countries),
+                true
+              );
+
+            // selectize.refreshOptions();
+            // selectize.refreshItems();
+
+            this.addingCountryRegionItems = false;
+          }
+        },
+      }).on('changeHERO', e => {
+        console.log('times are a changing');
+        const curSelected = $(e.target).val();
+        const newSelected = this.fullRegions;
+        const indexedRegions = getIndexedRegions();
+
+        curSelected.forEach(selected => {
+          // We started the newSelected list with any fully
+          // represented regions, not we'll add in the selected
+          // countries.
+          if (!indexedRegions[selected]) {
+            newSelected.push(selected);
+          }
+        });
+
+        $(e.target).val(newSelected);
       });
 
       this.serviceViews.forEach((serviceVw) => serviceVw.remove());

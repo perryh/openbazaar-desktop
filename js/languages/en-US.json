@@ -547,6 +547,14 @@
     "provideNumericAmount": "Please provide the price as a number.",
     "provideAmountGreaterThanZero": "The price must be greater than 0."
   },
+  "regions": {
+    "ALL": "All",
+    "EUROPEAN_UNION": "European Union",
+    "EUROPEAN_ECONOMIC_AREA": "European Economic Area",
+    "clear_ALL": "Clear All",
+    "clear_EUROPEAN_UNION": "Clear European Union",
+    "clear_EUROPEAN_ECONOMIC_AREA": "Clear European Economic Area"
+  },
   "countries": {
     "AFGHANISTAN": "Afghanistan",
     "ALAND_ISLANDS": "Aland Islands",

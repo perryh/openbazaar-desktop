@@ -1,3 +1,4 @@
+<a class="js-moo">moo time yall</a>
 <div class="contentBox pad clrP clrBr clrSh3 tx3">
   <form class="padSmKids padStack">
     <div class="flexVCent">
@@ -8,7 +9,14 @@
     <div class="flexRow padTop0">
       <div class="col12">
         <hr class="clrBr rowMd" />
-        <label for="<%= `shipDestinationsSelect_${ob.cid}` %>" class="required"><%= ob.polyT('editListing.shippingOptions.shippingDestinations') %></label>
+        <div class="flexRow">
+          <label for="<%= `shipDestinationsSelect_${ob.cid}` %>" class="required"><%= ob.polyT('editListing.shippingOptions.shippingDestinations') %></label>
+          <div class="flexExpand">
+            <div class="flexVCent flexHRight">
+              <a class="floR js-clearShipDest tx6">Clear All</a>
+            </div>
+          </div>
+        </div>
         <% if (ob.errors['regions']) print(ob.formErrorTmpl({ errors: ob.errors['regions'] })) %>
         <select id="<%= `shipDestinationsSelect_${ob.cid}` %>" multiple name="regions" class="clrBr clrP clrSh2" placeholder="<%= ob.polyT('editListing.shippingOptions.regionsPlaceholder') %>"></select>
       </div>
